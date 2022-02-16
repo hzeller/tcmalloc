@@ -1,0 +1,97 @@
+name: ci
+
+on:
+  push:
+    branches:
+    - master
+
+  pull_request:
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Cancel previous
+      uses: styfle/cancel-workflow-action@0.8.0
+      with:
+        access_token: ${{ github.token }}
+
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Create Cache Timestamp
+      id: cache_timestamp
+      uses: nanzm/get-time-action@v1.1
+      with:
+        format: 'YYYY-MM-DD-HH-mm-ss'
+
+    - name: Mount bazel cache
+      uses: actions/cache@v2
+      with:
+        path: "/home/runner/.cache/bazel"
+        key: bazelcache_macos_${{ steps.cache_timestamp.outputs.time }}
+        restore-keys: bazelcache_macos_
+
+    - name: Tests
+      run: bazel test --test_output=errors //...
+
+  MacOs:
+    runs-on: macos-latest
+    steps:
+
+    - name: Cancel previous
+      uses: styfle/cancel-workflow-action@0.8.0
+      with:
+        access_token: ${{ github.token }}
+
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Create Cache Timestamp
+      id: cache_timestamp
+      uses: nanzm/get-time-action@v1.1
+      with:
+        format: 'YYYY-MM-DD-HH-mm-ss'
+
+    - name: Mount bazel cache
+      uses: actions/cache@v2
+      with:
+        path: "/private/var/tmp/_bazel_runner"
+        key: bazelcache_macos_${{ steps.cache_timestamp.outputs.time }}
+        restore-keys: bazelcache_macos_
+
+    - name: Tests
+      run: bazel test --test_output=errors //...
+
+
+  Windows:
+    runs-on: windows-latest
+    steps:
+
+    - name: Cancel previous
+      uses: styfle/cancel-workflow-action@0.8.0
+      with:
+        access_token: ${{ github.token }}
+
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Create Cache Timestamp
+      id: cache_timestamp
+      uses: nanzm/get-time-action@v1.1
+      with:
+        format: 'YYYY-MM-DD-HH-mm-ss'
+
+    - name: Mount bazel cache
+      uses: actions/cache@v2
+      with:
+        path: "c:/users/runneradmin/_bazel_runneradmin"
+        key: bazelcache_windows_${{ steps.cache_timestamp.outputs.time }}
+        restore-keys: bazelcache_windows_
+
+    - name: Tests
+      run: bazel test --test_output=errors //...
