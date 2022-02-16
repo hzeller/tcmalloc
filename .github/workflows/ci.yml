@@ -2,23 +2,26 @@ name: ci
 
 on: [push, pull_request]
 
-build:
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        include:
-          - os: ubuntu-latest
-            name: Linux
-          - os: macos-latest
-            name: MacOs
-          - os: windows-latest
-            name: Windows
+#
+jobs:
+    build-and-test:
+      name: ${{ matrix.name }}
+      runs-on: ${{ matrix.os }}
+      strategy:
+        matrix:
+          os: [ubuntu-latest, macos-latest, windows-latest]
+          include:
+            - os: ubuntu-latest
+              name: Linux
+            - os: macos-latest
+              name: MacOs
+            - os: windows-latest
+              name: Windows
 
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Tests
-      run: bazel test --test_output=errors //...
+      steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Tests
+        run: bazel test --test_output=errors //...
